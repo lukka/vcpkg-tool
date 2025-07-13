@@ -16,3 +16,10 @@ CMakeLists.txt.user
 /vcpkg-root
 /CMakeUserPresets.json
 /work
+
+# Ignore compiled vcpkg-artifacts TypeScript output
+/vcpkg-artifacts/**/*.js
+/vcpkg-artifacts/**/*.d.ts
+/vcpkg-artifacts/**/*.d.ts.map
+!/vcpkg-artifacts/github-cache-cli.ts
+!/vcpkg-artifacts/package.json
