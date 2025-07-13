@@ -1,0 +1,184 @@
+"use strict";
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Installer = exports.Installs = void 0;
+const yaml_1 = require("yaml");
+const Entity_1 = require("../yaml/Entity");
+const EntitySequence_1 = require("../yaml/EntitySequence");
+const Options_1 = require("../yaml/Options");
+const strings_1 = require("../yaml/strings");
+class Installs extends EntitySequence_1.EntitySequence {
+    constructor(node, parent, key) {
+        super(Installer, node, parent, key);
+    }
+    *[Symbol.iterator]() {
+        if ((0, yaml_1.isMap)(this.node)) {
+            yield this.createInstance(this.node);
+        }
+        if ((0, yaml_1.isSeq)(this.node)) {
+            for (const item of this.node.items) {
+                yield this.createInstance(item);
+            }
+        }
+    }
+    createInstance(node) {
+        if ((0, yaml_1.isMap)(node)) {
+            if (node.has('unzip')) {
+                return new UnzipNode(node, this);
+            }
+            if (node.has('nupkg')) {
+                return new NupkgNode(node, this);
+            }
+            if (node.has('untar')) {
+                return new UnTarNode(node, this);
+            }
+            if (node.has('git')) {
+                return new GitCloneNode(node, this);
+            }
+        }
+        throw new Error('Unsupported node type');
+    }
+    *validate() {
+        yield* super.validate();
+        for (const each of this) {
+            yield* each.validate();
+        }
+    }
+}
+exports.Installs = Installs;
+class Installer extends Entity_1.Entity {
+    get installerKind() {
+        throw new Error('abstract type, should not get here.');
+    }
+    get fullName() {
+        return `${super.fullName}.${this.installerKind}`;
+    }
+    get lang() {
+        return this.asString(this.getMember('lang'));
+    }
+    get nametag() {
+        return this.asString(this.getMember('nametag'));
+    }
+    *validate() {
+        yield* super.validate();
+        yield* this.validateChild('lang', 'string');
+        yield* this.validateChild('nametag', 'string');
+    }
+}
+exports.Installer = Installer;
+class FileInstallerNode extends Installer {
+    get sha256() {
+        return this.asString(this.getMember('sha256'));
+    }
+    set sha256(value) {
+        this.setMember('sha256', value);
+    }
+    get sha512() {
+        return this.asString(this.getMember('sha512'));
+    }
+    set sha512(value) {
+        this.setMember('sha512', value);
+    }
+    get strip() {
+        return this.asNumber(this.getMember('strip'));
+    }
+    set strip(value) {
+        this.setMember('1', value);
+    }
+    transform = new strings_1.Strings(undefined, this, 'transform');
+    *validate() {
+        yield* super.validate();
+        yield* this.validateChild('strip', 'number');
+        yield* this.validateChild('sha256', 'string');
+        yield* this.validateChild('sha512', 'string');
+    }
+}
+class UnzipNode extends FileInstallerNode {
+    get installerKind() { return 'unzip'; }
+    location = new strings_1.Strings(undefined, this, 'unzip');
+    *validate() {
+        yield* super.validate();
+        yield* this.validateChildKeys(['unzip', 'sha256', 'sha512', 'strip', 'transform', 'lang', 'nametag']);
+    }
+}
+class UnTarNode extends FileInstallerNode {
+    get installerKind() { return 'untar'; }
+    location = new strings_1.Strings(undefined, this, 'untar');
+    *validate() {
+        yield* super.validate();
+        yield* this.validateChildKeys(['untar', 'sha256', 'sha512', 'strip', 'transform']);
+    }
+}
+class NupkgNode extends Installer {
+    get location() {
+        return this.asString(this.getMember('nupkg'));
+    }
+    set location(value) {
+        this.setMember('nupkg', value);
+    }
+    get installerKind() { return 'nupkg'; }
+    get strip() {
+        return this.asNumber(this.getMember('strip'));
+    }
+    set strip(value) {
+        this.setMember('1', value);
+    }
+    get sha256() {
+        return this.asString(this.getMember('sha256'));
+    }
+    set sha256(value) {
+        this.setMember('sha256', value);
+    }
+    get sha512() {
+        return this.asString(this.getMember('sha512'));
+    }
+    set sha512(value) {
+        this.setMember('sha512', value);
+    }
+    transform = new strings_1.Strings(undefined, this, 'transform');
+    *validate() {
+        yield* super.validate();
+        yield* this.validateChildKeys(['nupkg', 'sha256', 'sha512', 'strip', 'transform', 'lang', 'nametag']);
+    }
+}
+class GitCloneNode extends Installer {
+    get installerKind() { return 'git'; }
+    get location() {
+        return this.asString(this.getMember('git'));
+    }
+    set location(value) {
+        this.setMember('git', value);
+    }
+    get commit() {
+        return this.asString(this.getMember('commit'));
+    }
+    set commit(value) {
+        this.setMember('commit', value);
+    }
+    options = new Options_1.Options(undefined, this, 'options');
+    get full() {
+        return this.options.has('full');
+    }
+    set full(value) {
+        this.options.set('full', value);
+    }
+    get recurse() {
+        return this.options.has('recurse');
+    }
+    set recurse(value) {
+        this.options.set('recurse', value);
+    }
+    get subdirectory() {
+        return this.asString(this.getMember('subdirectory'));
+    }
+    set subdirectory(value) {
+        this.setMember('subdirectory', value);
+    }
+    *validate() {
+        yield* super.validate();
+        yield* this.validateChildKeys(['git', 'commit', 'subdirectory', 'options', 'lang', 'nametag']);
+        yield* this.validateChild('commit', 'string');
+    }
+}
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5zdGFsbGVyLmpzIiwic291cmNlUm9vdCI6Imh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9taWNyb3NvZnQvdmNwa2ctdG9vbC9tYWluL3ZjcGtnLWFydGlmYWN0cy8iLCJzb3VyY2VzIjpbImFtZi9pbnN0YWxsZXIudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IjtBQUFBLHVDQUF1QztBQUN2QyxrQ0FBa0M7OztBQUVsQywrQkFBb0M7QUFPcEMsMkNBQXdDO0FBQ3hDLDJEQUF3RDtBQUN4RCw2Q0FBMEM7QUFDMUMsNkNBQTBDO0FBRzFDLE1BQWEsUUFBUyxTQUFRLCtCQUF5QjtJQUNyRCxZQUFZLElBQXFCLEVBQUUsTUFBYSxFQUFFLEdBQVk7UUFDNUQsS0FBSyxDQUFDLFNBQVMsRUFBRSxJQUFJLEVBQUUsTUFBTSxFQUFFLEdBQUcsQ0FBQyxDQUFDO0lBQ3RDLENBQUM7SUFFUSxDQUFDLENBQUMsTUFBTSxDQUFDLFFBQVEsQ0FBQztRQUN6QixJQUFJLElBQUEsWUFBSyxFQUFDLElBQUksQ0FBQyxJQUFJLENBQUMsRUFBRSxDQUFDO1lBQ3JCLE1BQU0sSUFBSSxDQUFDLGNBQWMsQ0FBQyxJQUFJLENBQUMsSUFBSSxDQUFDLENBQUM7UUFDdkMsQ0FBQztRQUNELElBQUksSUFBQSxZQUFLLEVBQUMsSUFBSSxDQUFDLElBQUksQ0FBQyxFQUFFLENBQUM7WUFDckIsS0FBSyxNQUFNLElBQUksSUFBSSxJQUFJLENBQUMsSUFBSSxDQUFDLEtBQUssRUFBRSxDQUFDO2dCQUNuQyxNQUFNLElBQUksQ0FBQyxjQUFjLENBQU0sSUFBSSxDQUFDLENBQUM7WUFDdkMsQ0FBQztRQUNILENBQUM7SUFDSCxDQUFDO0lBRVMsY0FBYyxDQUFDLElBQVU7UUFDakMsSUFBSSxJQUFBLFlBQUssRUFBQyxJQUFJLENBQUMsRUFBRSxDQUFDO1lBQ2hCLElBQUksSUFBSSxDQUFDLEdBQUcsQ0FBQyxPQUFPLENBQUMsRUFBRSxDQUFDO2dCQUN0QixPQUFPLElBQUksU0FB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

@@ -1176,6 +1176,104 @@ namespace
         Path m_tool;
     };
 
+    struct GitHubCacheTool : IObjectStorageTool
+    {
+        GitHubCacheTool(const ToolCache& cache, MessageSink& sink, const Path& scripts_dir)
+            : m_node_tool(cache.get_tool_path(Tools::NODE, sink)), m_scripts_dir(scripts_dir)
+        {
+        }
+
+        LocalizedString restored_message(size_t count,
+                                         std::chrono::high_resolution_clock::duration elapsed) const override
+        {
+            return msg::format(msgRestoredPackagesFromHTTP, msg::count = count, msg::elapsed = ElapsedTime(elapsed));
+        }
+
+        ExpectedL<CacheAvailability> stat(StringView /*cache_key*/) const override
+        {
+            // For GitHub Actions cache, we don't have a direct stat operation
+            // We'll just return unknown and let the restore operation determine availability
+            return CacheAvailability::unknown;
+        }
+
+        ExpectedL<RestoreResult> download_file(StringView cache_key, const Path& archive) const override
+        {
+            auto cache_script = m_scripts_dir / "github-cache-cli.js";
+            if (!real_filesystem.exists(cache_script, IgnoreErrors{}))
+            {
+                return msg::format_error(msgUnexpectedToolOutput, msg::tool_name = "github-cache-cli", msg::path = cache_script);
+            }
+
+            auto cmd = Command{m_node_tool}
+                .string_arg(cache_script)
+                .string_arg("restore")
+                .string_arg(cache_key)
+                .string_arg(archive.parent_path())
+                .string_arg(cache_key); // Use cache_key as restore key too
+
+            return cmd_execute_and_capture_output(cmd)
+                .then([&](ExitCodeAndOutput&& result) -> ExpectedL<RestoreResult> {
+                    if (result.exit_code == 0)
+                    {
+                        try
+                        {
+                            // Parse JSON response from the script
+                            auto json_response = Json::parse(result.output, {});
+                            if (auto response = json_response.get())
+                            {
+                                if (response->value.is_object())
+                                {
+                                    auto& obj = response->value.object(VCPKG_LINE_INFO);
+                                    auto success = obj.get("success");
+                                    auto cache_hit = obj.get("cacheHit");
+                                    
+                                    if (success && success->is_boolean() && success->boolean(VCPKG_LINE_INFO))
+                                    {
+                                        if (cache_hit && cache_hit->is_boolean() && cache_hit->boolean(VCPKG_LINE_INFO))
+                                        {
+                                            return RestoreResult::restored;
+                                        }
+                                        else
+                                        {
+                                            return RestoreResult::unavailable;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch (...)
+                        {
+                            // Fall through to error case
+                        }
+                    }
+                    
+                    return msg::format_error(msgUnexpectedToolOutput, 
+                                           msg::tool_name = "github-cache-cli",
+                                           msg::path = result.output);
+                });
+        }
+
+        ExpectedL<Unit> upload_file(StringView cache_key, const Path& archive) const override
+        {
+            auto cache_script = m_scripts_dir / "github-cache-cli.js";
+            if (!real_filesystem.exists(cache_script, IgnoreErrors{}))
+            {
+                return msg::format_error(msgUnexpectedToolOutput, msg::tool_name = "github-cache-cli", msg::path = cache_script);
+            }
+
+            auto cmd = Command{m_node_tool}
+                .string_arg(cache_script)
+                .string_arg("save")
+                .string_arg(cache_key)
+                .string_arg(archive);
+
+            return flatten_generic(cmd_execute_and_capture_output(cmd), "github-cache-cli", Unit{});
+        }
+
+        Path m_node_tool;
+        Path m_scripts_dir;
+    };
+
     struct AzureUpkgTool
     {
         AzureUpkgTool(const ToolCache& cache, MessageSink& sink) { az_cli = cache.get_tool_path(Tools::AZCLI, sink); }
@@ -1728,7 +1826,15 @@ namespace
             }
             else if (segments[0].second == "x-gha")
             {
-                add_warning(msg::format(msgGhaBinaryCacheDeprecated, msg::url = docs::binarycaching_url));
+                if (segments.size() > 2)
+                {
+                    return add_error(
+                        msg::format(msgInvalidArgumentRequiresSingleArgument, msg::binary_source = "x-gha"),
+                        segments[2].first);
+                }
+
+                handle_readwrite(state->gha_cache_enabled, state->gha_cache_enabled, segments, 1);
+                state->binary_cache_providers.insert("gha");
             }
             else if (segments[0].second == "http")
             {
@@ -2298,9 +2404,17 @@ namespace vcpkg
             {
                 cos_tool = std::make_shared<CosStorageTool>(tools, out_sink);
             }
+            std::shared_ptr<const GitHubCacheTool> gha_tool;
+            if (s.gha_cache_enabled)
+            {
+                // Get the scripts directory - this should be where github-cache-cli.js is located
+                auto scripts_dir = paths.root / "scripts";
+                gha_tool = std::make_shared<GitHubCacheTool>(tools, out_sink, scripts_dir);
+            }
 
             if (!s.archives_to_read.empty() || !s.url_templates_to_get.empty() || !s.gcs_read_prefixes.empty() ||
-                !s.aws_read_prefixes.empty() || !s.cos_read_prefixes.empty() || !s.upkg_templates_to_get.empty())
+                !s.aws_read_prefixes.empty() || !s.cos_read_prefixes.empty() || !s.upkg_templates_to_get.empty() ||
+                s.gha_cache_enabled)
             {
                 ZipTool zip_tool;
                 zip_tool.setup(tools, out_sink);
@@ -2331,6 +2445,13 @@ namespace vcpkg
                 {
                     m_config.read.push_back(
                         std::make_unique<ObjectStorageProvider>(zip_tool, fs, buildtrees, std::move(prefix), cos_tool));
+                }
+
+                if (s.gha_cache_enabled)
+                {
+                    // GitHub Actions cache uses a default prefix
+                    m_config.read.push_back(
+                        std::make_unique<ObjectStorageProvider>(zip_tool, fs, buildtrees, "vcpkg-binary-", gha_tool));
                 }
 
                 for (auto&& src : s.upkg_templates_to_get)
@@ -2373,6 +2494,13 @@ namespace vcpkg
             {
                 m_config.write.push_back(
                     std::make_unique<ObjectStoragePushProvider>(std::move(s.cos_write_prefixes), cos_tool));
+            }
+            if (s.gha_cache_enabled)
+            {
+                // Create a single-element vector with the default prefix
+                std::vector<std::string> gha_prefixes = {"vcpkg-binary-"};
+                m_config.write.push_back(
+                    std::make_unique<ObjectStoragePushProvider>(std::move(gha_prefixes), gha_tool));
             }
 
             if (!s.sources_to_read.empty() || !s.configs_to_read.empty() || !s.sources_to_write.empty() ||

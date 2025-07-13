@@ -163,6 +163,8 @@ namespace vcpkg
         std::vector<AzureUpkgSource> upkg_templates_to_get;
         std::vector<AzureUpkgSource> upkg_templates_to_put;
 
+        bool gha_cache_enabled = false;
+
         std::vector<std::string> sources_to_read;
         std::vector<std::string> sources_to_write;
 

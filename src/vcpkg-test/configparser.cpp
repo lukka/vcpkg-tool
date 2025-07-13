@@ -598,6 +598,51 @@ TEST_CASE ("BinaryConfigParser Universal Packages provider", "[binaryconfigparse
     }
 }
 
+TEST_CASE ("BinaryConfigParser x-gha provider", "[binaryconfigparser]")
+{
+    // Test basic x-gha configuration
+    {
+        auto parsed = parse_binary_provider_configs("x-gha", {});
+        REQUIRE(parsed.has_value());
+        auto& state = *parsed.get();
+        CHECK(state.gha_cache_enabled == true);
+        CHECK(state.binary_cache_providers.count("gha") == 1);
+    }
+
+    // Test x-gha with readwrite mode
+    {
+        auto parsed = parse_binary_provider_configs("x-gha,readwrite", {});
+        REQUIRE(parsed.has_value());
+        auto& state = *parsed.get();
+        CHECK(state.gha_cache_enabled == true);
+        CHECK(state.binary_cache_providers.count("gha") == 1);
+    }
+
+    // Test x-gha with read mode
+    {
+        auto parsed = parse_binary_provider_configs("x-gha,read", {});
+        REQUIRE(parsed.has_value());
+        auto& state = *parsed.get();
+        CHECK(state.gha_cache_enabled == true);
+        CHECK(state.binary_cache_providers.count("gha") == 1);
+    }
+
+    // Test x-gha with write mode
+    {
+        auto parsed = parse_binary_provider_configs("x-gha,write", {});
+        REQUIRE(parsed.has_value());
+        auto& state = *parsed.get();
+        CHECK(state.gha_cache_enabled == true);
+        CHECK(state.binary_cache_providers.count("gha") == 1);
+    }
+
+    // Test x-gha with too many arguments (should fail)
+    {
+        auto parsed = parse_binary_provider_configs("x-gha,read,extra", {});
+        REQUIRE(!parsed.has_value());
+    }
+}
+
 TEST_CASE ("AssetConfigParser azurl provider", "[assetconfigparser]")
 {
     CHECK(parse_download_configuration({}));
