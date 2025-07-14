@@ -22,10 +22,10 @@ CMakeLists.txt.user
 /vcpkg-artifacts/**/*.js
 /vcpkg-artifacts/**/*.d.ts
 /vcpkg-artifacts/**/*.d.ts.map
-!/vcpkg-artifacts/github-cache-cli.ts
 !/vcpkg-artifacts/package.json
 
-# Allow scripts directory package files but ignore generated content
-!/scripts/package.json
-!/scripts/.npmrc
-!/scripts/github-cache-cli.js
+# Ignore compiled github-cache-cli TypeScript output and dependencies
+./scripts/github-cache-cli/**/*.js
+./scripts/github-cache-cli/**/*.d.ts
+./scripts/github-cache-cli/**/*.js.map
+./scripts/github-cache-cli/node_modules/

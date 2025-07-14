@@ -1,38 +1,40 @@
-#!/usr/bin/env node
-
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 /**
- * GitHub Actions Cache CLI Tool (JavaScript version)
+ * GitHub Actions Cache CLI Tool
  * 
- * This is a standalone JavaScript version that doesn't require compilation.
- * It provides a command-line interface for interacting with GitHub Actions cache.
+ * This module provides a command-line interface for interacting with GitHub Actions cache
+ * using the @actions/cache library. It abstracts the cache operations for vcpkg-tool.
  */
 
-const fs = require('fs');
-const path = require('path');
-
-// Import the @actions/cache library
-let cache;
-try {
-  cache = require('@actions/cache');
-} catch (error) {
-  console.error(JSON.stringify({
-    success: false,
-    error: '@actions/cache package not found. Please run: npm install'
-  }));
-  process.exit(1);
-}
+import * as cache from '@actions/cache';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // GitHub Actions cache key prefix for vcpkg binary packages
 const VCPKG_CACHE_PREFIX = 'vcpkg-binary-';
+
+interface CacheOptions {
+  key: string;
+  paths: string[];
+  restoreKeys?: string[];
+}
+
+interface CacheResult {
+  success: boolean;
+  cacheHit?: boolean;
+  cacheKey?: string | null;
+  cacheId?: number;
+  message?: string;
+  error?: string;
+}
 
 class GitHubCacheHandler {
   /**
    * Check if GitHub Actions environment variables are available
    */
-  static isGitHubActions() {
+  static isGitHubActions(): boolean {
     return !!(process.env.GITHUB_ACTIONS && 
               process.env.GITHUB_TOKEN && 
               process.env.ACTIONS_CACHE_URL &&
@@ -40,9 +42,9 @@ class GitHubCacheHandler {
   }
 
   /**
-   * Restore cache using @actions/cache
+   * Restore a cache entry
    */
-  async restore(options) {
+  async restore(options: CacheOptions): Promise<CacheResult> {
     try {
       if (!GitHubCacheHandler.isGitHubActions()) {
         return {
@@ -51,8 +53,12 @@ class GitHubCacheHandler {
         };
       }
 
-      const cacheKey = await cache.restoreCache(options.paths, options.key, options.restoreKeys);
-      
+      const cacheKey = await cache.restoreCache(
+        options.paths,
+        options.key,
+        options.restoreKeys
+      );
+
       return {
         success: true,
         cacheHit: !!cacheKey,
@@ -62,15 +68,15 @@ class GitHubCacheHandler {
     } catch (error) {
       return {
         success: false,
-        error: `Cache restore failed: ${error.message}`
+        error: `Cache restore failed: ${error instanceof Error ? error.message : String(error)}`
       };
     }
   }
 
   /**
-   * Save cache using @actions/cache
+   * Save a cache entry
    */
-  async save(options) {
+  async save(options: CacheOptions): Promise<CacheResult> {
     try {
       if (!GitHubCacheHandler.isGitHubActions()) {
         return {
@@ -99,7 +105,7 @@ class GitHubCacheHandler {
     } catch (error) {
       return {
         success: false,
-        error: `Cache save failed: ${error.message}`
+        error: `Cache save failed: ${error instanceof Error ? error.message : String(error)}`
       };
     }
   }
@@ -107,7 +113,7 @@ class GitHubCacheHandler {
   /**
    * Generate a vcpkg cache key from package ABI
    */
-  static generateCacheKey(packageAbi) {
+  static generateCacheKey(packageAbi: string): string {
     return `${VCPKG_CACHE_PREFIX}${packageAbi}`;
   }
 }
@@ -115,7 +121,7 @@ class GitHubCacheHandler {
 /**
  * CLI interface for the GitHub cache tool
  */
-async function main() {
+async function main(): Promise<void> {
   const args = process.argv.slice(2);
 
   if (args.length < 1) {
@@ -189,11 +195,14 @@ async function main() {
   } catch (error) {
     console.error(JSON.stringify({
       success: false,
-      error: `Unexpected error: ${error.message}`
+      error: `Unexpected error: ${error instanceof Error ? error.message : String(error)}`
     }));
     process.exit(1);
   }
 }
+
+// Export for testing purposes
+export { GitHubCacheHandler, CacheOptions, CacheResult };
 
 // Run CLI if this file is executed directly
 if (require.main === module) {
@@ -202,5 +211,3 @@ if (require.main === module) {
     process.exit(1);
   });
 }
-
-module.exports = { GitHubCacheHandler };

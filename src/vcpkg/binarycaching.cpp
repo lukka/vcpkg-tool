@@ -1198,7 +1198,7 @@ namespace
 
         ExpectedL<RestoreResult> download_file(StringView cache_key, const Path& archive) const override
         {
-            auto cache_script = m_scripts_dir / "github-cache-cli.js";
+            auto cache_script = m_scripts_dir / "github-cache-cli" / "github-cache-cli.js";
             if (!real_filesystem.exists(cache_script, IgnoreErrors{}))
             {
                 return msg::format_error(msgUnexpectedToolOutput, msg::tool_name = "github-cache-cli", msg::path = cache_script);
@@ -1255,7 +1255,7 @@ namespace
 
         ExpectedL<Unit> upload_file(StringView cache_key, const Path& archive) const override
         {
-            auto cache_script = m_scripts_dir / "github-cache-cli.js";
+            auto cache_script = m_scripts_dir / "github-cache-cli" / "github-cache-cli.js";
             if (!real_filesystem.exists(cache_script, IgnoreErrors{}))
             {
                 return msg::format_error(msgUnexpectedToolOutput, msg::tool_name = "github-cache-cli", msg::path = cache_script);
@@ -2407,7 +2407,7 @@ namespace vcpkg
             std::shared_ptr<const GitHubCacheTool> gha_tool;
             if (s.gha_cache_enabled)
             {
-                // Get the scripts directory - this should be where github-cache-cli.js is located
+                // Get the scripts directory - this should be where github-cache-cli/github-cache-cli.js is located
                 auto scripts_dir = paths.root / "scripts";
                 gha_tool = std::make_shared<GitHubCacheTool>(tools, out_sink, scripts_dir);
             }

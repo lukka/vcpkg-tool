@@ -1,0 +1,6 @@
+# Build artifacts - only TypeScript source should be checked in
+*.js
+*.d.ts
+*.js.map
+node_modules/
+package-lock.json
