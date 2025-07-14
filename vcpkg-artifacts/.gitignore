@@ -1,2 +1,6 @@
 node_modules/*
 dist/*
+# TypeScript compilation outputs that shouldn't be tracked
+*.d.ts
+*.d.ts.map
+*.js
