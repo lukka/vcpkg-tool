@@ -3,4 +3,3 @@
 *.d.ts
 *.js.map
 node_modules/
-package-lock.json
