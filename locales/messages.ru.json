@@ -590,7 +590,6 @@
   "ForceSystemBinariesOnWeirdPlatforms": "Переменная среды VCPKG_FORCE_SYSTEM_BINARIES должна быть задана на платформах ARM, s390x, ppc64le и RISC.",
   "FormattedParseMessageExpressionPrefix": "в выражении:",
   "GetParseFailureInfo": "Используйте \"--debug\", чтобы получить дополнительные сведения о сбоях анализа.",
-  "GhaBinaryCacheDeprecated": "Внутренний сервер кэширования двоичных файлов \"x-gha\" был удален. Вместо этого рассмотрите возможность использования поставщика двоичного кэширования на основе NuGet. См. дополнительную документацию в {url}.",
   "GitCommandFailed": "не удалось выполнить: {command_line}",
   "GitCommitUpdateVersionDatabase": "git commit -m \"Обновить базу данных версий\"",
   "GitFailedToFetch": "не удалось получить ссылку {value} из репозитория {url}",

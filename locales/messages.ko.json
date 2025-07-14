@@ -590,7 +590,6 @@
   "ForceSystemBinariesOnWeirdPlatforms": "arm, s390x, ppc64le 및 riscv 플랫폼에서 환경 변수 VCPKG_FORCE_SYSTEM_BINARIES를 설정해야 합니다.",
   "FormattedParseMessageExpressionPrefix": "on 식:",
   "GetParseFailureInfo": "'--debug'를 사용하여 구문 분석 실패에 대한 자세한 정보를 가져옵니다.",
-  "GhaBinaryCacheDeprecated": "'x-gha' 이진 캐싱 백엔드가 제거되었습니다. 대신 NuGet 기반 이진 캐싱 공급자를 사용하는 것이 좋습니다. 자세한 내용은 {url}의 확장 문서를 참조하세요.",
   "GitCommandFailed": "명령을 실행하지 못했습니다: {command_line}",
   "GitCommitUpdateVersionDatabase": "git commit -m \"Update version database\"",
   "GitFailedToFetch": "리포지토리 {url}에서 참조 {value}을(를) 가져오지 못함",

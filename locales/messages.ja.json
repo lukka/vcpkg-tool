@@ -590,7 +590,6 @@
   "ForceSystemBinariesOnWeirdPlatforms": "arm、s390x、ppc64le、riscv プラットフォームでは、環境変数 VCPKG_FORCE_SYSTEM_BINARIES を設定する必要があります。",
   "FormattedParseMessageExpressionPrefix": "式について:",
   "GetParseFailureInfo": "'--debug' を使用して、解析エラーに関する詳細情報を取得します。",
-  "GhaBinaryCacheDeprecated": "'x-gha' バイナリ キャッシュ バックエンドが削除されました。代わりに NuGet ベースのバイナリ キャッシュ プロバイダーの使用を検討してください。{url} の拡張ドキュメントを参照してください。",
   "GitCommandFailed": "{command_line} を実行できませんでした",
   "GitCommitUpdateVersionDatabase": "git commit -m \"Update version database\"",
   "GitFailedToFetch": "リポジトリ {url} から参照 {value} をフェッチできませんでした",

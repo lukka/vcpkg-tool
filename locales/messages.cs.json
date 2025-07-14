@@ -590,7 +590,6 @@
   "ForceSystemBinariesOnWeirdPlatforms": "Proměnná prostředí VCPKG_FORCE_SYSTEM_BINARIES musí být nastavená na platformách arm, s390x, ppc64le a riscv.",
   "FormattedParseMessageExpressionPrefix": "výraz on:",
   "GetParseFailureInfo": "Pokud chcete získat další informace o chybách analýzy, použijte --debug.",
-  "GhaBinaryCacheDeprecated": "Back-end pro binární ukládání do mezipaměti x-gha byl odebrán. Zvažte místo toho použití zprostředkovatele binárního ukládání do mezipaměti založeného na NuGetu. Další informace najdete v rozšířené dokumentaci na adrese {url}.",
   "GitCommandFailed": "spuštění příkazu se nepovedlo: {command_line}",
   "GitCommitUpdateVersionDatabase": "git commit -m \"Aktualizovat databázi verzí\"",
   "GitFailedToFetch": "Nepovedlo se načíst referenční {value} z {url} úložiště.",

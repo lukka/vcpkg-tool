@@ -590,7 +590,6 @@
   "ForceSystemBinariesOnWeirdPlatforms": "La variabile di ambiente VCPKG_FORCE_SYSTEM_BINARIES deve essere impostata su piattaforme arm, s390x, ppc64le e riscv.",
   "FormattedParseMessageExpressionPrefix": "sull'espressione:",
   "GetParseFailureInfo": "Usare '--debug' per ottenere altre informazioni sugli errori di analisi.",
-  "GhaBinaryCacheDeprecated": "Il back-end di memorizzazione nella cache binaria 'x-gha' è stato rimosso. Considera l'uso di un provider di memorizzazione nella cache binaria basato su NuGet; vedi la documentazione estesa su {url}.",
   "GitCommandFailed": "non è stato possibile eseguire: {command_line}",
   "GitCommitUpdateVersionDatabase": "git commit -m \"Aggiorna database della versione\"",
   "GitFailedToFetch": "non è stato possibile recuperare il valore {value} di riferimento dal repository {url}",
