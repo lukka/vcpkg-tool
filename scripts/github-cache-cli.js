@@ -13,9 +13,17 @@
 const fs = require('fs');
 const path = require('path');
 
-// Since we can't install @actions/cache in this environment, we'll create a mock implementation
-// that demonstrates the interface. In a real environment, this would use:
-// const cache = require('@actions/cache');
+// Import the @actions/cache library
+let cache;
+try {
+  cache = require('@actions/cache');
+} catch (error) {
+  console.error(JSON.stringify({
+    success: false,
+    error: '@actions/cache package not found. Please run: npm install'
+  }));
+  process.exit(1);
+}
 
 // GitHub Actions cache key prefix for vcpkg binary packages
 const VCPKG_CACHE_PREFIX = 'vcpkg-binary-';
@@ -32,7 +40,7 @@ class GitHubCacheHandler {
   }
 
   /**
-   * Mock restore implementation - in real usage this would call @actions/cache.restoreCache
+   * Restore cache using @actions/cache
    */
   async restore(options) {
     try {
@@ -43,12 +51,13 @@ class GitHubCacheHandler {
         };
       }
 
-      // Mock implementation - would call: await cache.restoreCache(options.paths, options.key, options.restoreKeys)
-      // For now, we'll simulate a cache miss since we can't actually call the GitHub API
+      const cacheKey = await cache.restoreCache(options.paths, options.key, options.restoreKeys);
+      
       return {
         success: true,
-        cacheHit: false,
-        message: 'Mock implementation: No cache entry found'
+        cacheHit: !!cacheKey,
+        cacheKey: cacheKey || null,
+        message: cacheKey ? `Cache restored from key: ${cacheKey}` : 'No cache entry found'
       };
     } catch (error) {
       return {
@@ -59,7 +68,7 @@ class GitHubCacheHandler {
   }
 
   /**
-   * Mock save implementation - in real usage this would call @actions/cache.saveCache
+   * Save cache using @actions/cache
    */
   async save(options) {
     try {
@@ -80,12 +89,12 @@ class GitHubCacheHandler {
         }
       }
 
-      // Mock implementation - would call: await cache.saveCache(options.paths, options.key)
-      const mockCacheId = Math.floor(Math.random() * 1000000);
+      const cacheId = await cache.saveCache(options.paths, options.key);
       
       return {
         success: true,
-        message: `Mock implementation: Cache would be saved with ID: ${mockCacheId}`
+        cacheId: cacheId,
+        message: `Cache saved with ID: ${cacheId}`
       };
     } catch (error) {
       return {

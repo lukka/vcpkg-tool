@@ -12,6 +12,7 @@
 CMakeLists.txt.user
 .cache
 /vcpkg-artifacts/node_modules/
+/scripts/node_modules/
 **/dist/
 /vcpkg-root
 /CMakeUserPresets.json
@@ -23,3 +24,8 @@ CMakeLists.txt.user
 /vcpkg-artifacts/**/*.d.ts.map
 !/vcpkg-artifacts/github-cache-cli.ts
 !/vcpkg-artifacts/package.json
+
+# Allow scripts directory package files but ignore generated content
+!/scripts/package.json
+!/scripts/.npmrc
+!/scripts/github-cache-cli.js

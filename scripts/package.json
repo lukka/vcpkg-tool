@@ -1,0 +1,27 @@
+{
+  "name": "vcpkg-github-cache-cli",
+  "version": "1.0.0",
+  "description": "GitHub Actions cache CLI tool for vcpkg binary caching",
+  "main": "github-cache-cli.js",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "scripts": {
+    "test": "node github-cache-cli.js check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Microsoft/vcpkg-tool.git"
+  },
+  "keywords": [
+    "vcpkg",
+    "github-actions",
+    "cache",
+    "binary-cache"
+  ],
+  "author": "Microsoft",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/cache": "^3.2.4"
+  }
+}
