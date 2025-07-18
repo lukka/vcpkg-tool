@@ -1833,7 +1833,7 @@ namespace
                         segments[2].first);
                 }
 
-                handle_readwrite(state->gha_cache_enabled, state->gha_cache_enabled, segments, 1);
+                handle_readwrite(state->gha_read, state->gha_write, segments, 1);
                 state->binary_cache_providers.insert("gha");
             }
             else if (segments[0].second == "http")
@@ -2405,7 +2405,7 @@ namespace vcpkg
                 cos_tool = std::make_shared<CosStorageTool>(tools, out_sink);
             }
             std::shared_ptr<const GitHubCacheTool> gha_tool;
-            if (s.gha_cache_enabled)
+            if (s.gha_read || s.gha_write)
             {
                 // Get the scripts directory - this should be where github-cache-cli/dist/github-cache-cli.js is located
                 auto scripts_dir = paths.root / "scripts";
@@ -2414,7 +2414,7 @@ namespace vcpkg
 
             if (!s.archives_to_read.empty() || !s.url_templates_to_get.empty() || !s.gcs_read_prefixes.empty() ||
                 !s.aws_read_prefixes.empty() || !s.cos_read_prefixes.empty() || !s.upkg_templates_to_get.empty() ||
-                s.gha_cache_enabled)
+                s.gha_read)
             {
                 ZipTool zip_tool;
                 zip_tool.setup(tools, out_sink);
@@ -2447,7 +2447,7 @@ namespace vcpkg
                         std::make_unique<ObjectStorageProvider>(zip_tool, fs, buildtrees, std::move(prefix), cos_tool));
                 }
 
-                if (s.gha_cache_enabled)
+                if (s.gha_read)
                 {
                     // GitHub Actions cache uses a default prefix
                     m_config.read.push_back(
@@ -2495,7 +2495,7 @@ namespace vcpkg
                 m_config.write.push_back(
                     std::make_unique<ObjectStoragePushProvider>(std::move(s.cos_write_prefixes), cos_tool));
             }
-            if (s.gha_cache_enabled)
+            if (s.gha_write)
             {
                 // Create a single-element vector with the default prefix
                 std::vector<std::string> gha_prefixes = {"vcpkg-binary-"};
