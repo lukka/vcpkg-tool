@@ -1201,18 +1201,19 @@ namespace
             auto cache_script = m_scripts_dir / "github-cache-cli" / "dist" / "github-cache-cli.js";
             if (!real_filesystem.exists(cache_script, IgnoreErrors{}))
             {
-                return msg::format_error(msgUnexpectedToolOutput, msg::tool_name = "github-cache-cli", msg::path = cache_script);
+                return msg::format_error(
+                    msgUnexpectedToolOutput, msg::tool_name = "github-cache-cli", msg::path = cache_script);
             }
 
             auto cmd = Command{m_node_tool}
-                .string_arg(cache_script)
-                .string_arg("restore")
-                .string_arg(cache_key)
-                .string_arg(archive.parent_path())
-                .string_arg(cache_key); // Use cache_key as restore key too
+                           .string_arg(cache_script)
+                           .string_arg("restore")
+                           .string_arg(cache_key)
+                           .string_arg(archive.parent_path())
+                           .string_arg(cache_key); // Use cache_key as restore key too
 
-            return cmd_execute_and_capture_output(cmd)
-                .then([&](ExitCodeAndOutput&& result) -> ExpectedL<RestoreResult> {
+            return cmd_execute_and_capture_output(cmd).then(
+                [&](ExitCodeAndOutput&& result) -> ExpectedL<RestoreResult> {
                     if (result.exit_code == 0)
                     {
                         try
@@ -1226,7 +1227,7 @@ namespace
                                     auto& obj = response->value.object(VCPKG_LINE_INFO);
                                     auto success = obj.get("success");
                                     auto cache_hit = obj.get("cacheHit");
-                                    
+
                                     if (success && success->is_boolean() && success->boolean(VCPKG_LINE_INFO))
                                     {
                                         if (cache_hit && cache_hit->is_boolean() && cache_hit->boolean(VCPKG_LINE_INFO))
@@ -1246,10 +1247,9 @@ namespace
                             // Fall through to error case
                         }
                     }
-                    
-                    return msg::format_error(msgUnexpectedToolOutput, 
-                                           msg::tool_name = "github-cache-cli",
-                                           msg::path = result.output);
+
+                    return msg::format_error(
+                        msgUnexpectedToolOutput, msg::tool_name = "github-cache-cli", msg::path = result.output);
                 });
         }
 
@@ -1258,14 +1258,15 @@ namespace
             auto cache_script = m_scripts_dir / "github-cache-cli" / "dist" / "github-cache-cli.js";
             if (!real_filesystem.exists(cache_script, IgnoreErrors{}))
             {
-                return msg::format_error(msgUnexpectedToolOutput, msg::tool_name = "github-cache-cli", msg::path = cache_script);
+                return msg::format_error(
+                    msgUnexpectedToolOutput, msg::tool_name = "github-cache-cli", msg::path = cache_script);
             }
 
             auto cmd = Command{m_node_tool}
-                .string_arg(cache_script)
-                .string_arg("save")
-                .string_arg(cache_key)
-                .string_arg(archive);
+                           .string_arg(cache_script)
+                           .string_arg("save")
+                           .string_arg(cache_key)
+                           .string_arg(archive);
 
             return flatten_generic(cmd_execute_and_capture_output(cmd), "github-cache-cli", Unit{});
         }
