@@ -2,14 +2,16 @@
   "name": "vcpkg-github-cache-cli",
   "version": "1.0.0",
   "description": "GitHub Actions cache CLI tool for vcpkg binary caching",
-  "main": "github-cache-cli.js",
+  "main": "dist/github-cache-cli.js",
   "engines": {
     "node": ">=16.0.0"
   },
   "scripts": {
     "build": "tsc",
-    "test": "node github-cache-cli.js check",
-    "clean": "rm -f *.js *.d.ts *.js.map"
+    "pack": "npx ncc build build/github-cache-cli.js -o dist -m && mv dist/index.js dist/github-cache-cli.js",
+    "build-and-pack": "npm run build && npm run pack",
+    "test": "node dist/github-cache-cli.js check",
+    "clean": "rm -rf build dist *.js *.d.ts *.js.map"
   },
   "repository": {
     "type": "git",
@@ -28,6 +30,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.0.0",
+    "@vercel/ncc": "^0.38.0",
     "typescript": "^5.0.0"
   }
 }

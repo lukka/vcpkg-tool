@@ -405,30 +405,28 @@ if (VCPKG_ARTIFACTS_DEVELOPMENT)
 
     add_custom_command(
         OUTPUT
-            "${GITHUB_CACHE_CLI_SOURCE_DIR}/github-cache-cli.js"
-            "${GITHUB_CACHE_CLI_SOURCE_DIR}/github-cache-cli.d.ts"
-        COMMAND "${NPM}" ARGS "run" "build"
+            "${GITHUB_CACHE_CLI_SOURCE_DIR}/dist/github-cache-cli.js"
+        COMMAND "${NPM}" ARGS "run" "build-and-pack"
         WORKING_DIRECTORY
             "${GITHUB_CACHE_CLI_SOURCE_DIR}"
         DEPENDS
-            "${GITHUB_CACHE_CLI_SOURCE_DIR}/github-cache-cli.ts"
+            "${GITHUB_CACHE_CLI_SOURCE_DIR}/src/github-cache-cli.ts"
             "${GITHUB_CACHE_CLI_SOURCE_DIR}/tsconfig.json"
             "${GITHUB_CACHE_CLI_SOURCE_DIR}/package.json"
             "${GITHUB_CACHE_CLI_SOURCE_DIR}/node_modules"
         COMMENT
-            "Building github-cache-cli TypeScript..."
+            "Building and packaging github-cache-cli TypeScript with ncc..."
         VERBATIM
         )
 
     add_custom_target(github-cache-cli-build
         ALL
         DEPENDS
-            "${GITHUB_CACHE_CLI_SOURCE_DIR}/github-cache-cli.js"
-            "${GITHUB_CACHE_CLI_SOURCE_DIR}/github-cache-cli.d.ts"
+            "${GITHUB_CACHE_CLI_SOURCE_DIR}/dist/github-cache-cli.js"
         )
     set_target_properties(github-cache-cli-build
         PROPERTIES
-            ADDITIONAL_CLEAN_FILES "${GITHUB_CACHE_CLI_SOURCE_DIR}/github-cache-cli.js;${GITHUB_CACHE_CLI_SOURCE_DIR}/github-cache-cli.d.ts;${GITHUB_CACHE_CLI_SOURCE_DIR}/github-cache-cli.js.map;${GITHUB_CACHE_CLI_SOURCE_DIR}/node_modules")
+            ADDITIONAL_CLEAN_FILES "${GITHUB_CACHE_CLI_SOURCE_DIR}/build;${GITHUB_CACHE_CLI_SOURCE_DIR}/dist;${GITHUB_CACHE_CLI_SOURCE_DIR}/node_modules")
 endif()
 
 set(CPP_ATOMIC_LIBRARY "")

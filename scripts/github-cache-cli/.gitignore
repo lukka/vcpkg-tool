@@ -1,5 +1,11 @@
-# Build artifacts - only TypeScript source should be checked in
+# TypeScript compilation output
+build/
+dist/
+
+# Node.js dependencies
+node_modules/
+
+# TypeScript build artifacts (if any remain in root)
 *.js
 *.d.ts
 *.js.map
-node_modules/

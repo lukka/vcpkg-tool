@@ -3,8 +3,8 @@
     "target": "ES2020",
     "module": "CommonJS",
     "lib": ["ES2020"],
-    "outDir": "./",
-    "rootDir": "./",
+    "outDir": "./build",
+    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -15,10 +15,12 @@
     "sourceMap": true
   },
   "include": [
-    "github-cache-cli.ts"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
+    "build",
+    "dist",
     "*.js",
     "*.d.ts"
   ]
