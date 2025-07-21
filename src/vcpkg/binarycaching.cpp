@@ -1207,7 +1207,7 @@ namespace
 
             auto cmd = Command{m_node_tool}
                            .string_arg(cache_script)
-                           .string_arg("restore")
+                           .string_arg("--restore")
                            .string_arg(cache_key)
                            .string_arg(archive.parent_path())
                            .string_arg(cache_key); // Use cache_key as restore key too
@@ -1264,7 +1264,7 @@ namespace
 
             auto cmd = Command{m_node_tool}
                            .string_arg(cache_script)
-                           .string_arg("save")
+                           .string_arg("--save")
                            .string_arg(cache_key)
                            .string_arg(archive);
 

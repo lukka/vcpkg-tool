@@ -127,10 +127,10 @@ async function main(): Promise<void> {
   if (args.length < 1) {
     console.error('Usage: node github-cache-cli.js <command> [options]');
     console.error('Commands:');
-    console.error('  restore <key> <path> [restore-keys...]  - Restore cache entry');
-    console.error('  save <key> <path>                       - Save cache entry');
-    console.error('  check                                   - Check GitHub Actions environment');
-    console.error('  version                                 - Show version information');
+    console.error('  --restore <key> <path> [restore-keys...]  - Restore cache entry');
+    console.error('  --save <key> <path>                       - Save cache entry');
+    console.error('  --check                                   - Check GitHub Actions environment');
+    console.error('  --version                                 - Show version information');
     process.exit(1);
   }
 
@@ -139,7 +139,7 @@ async function main(): Promise<void> {
 
   try {
     switch (command) {
-      case 'check': {
+      case '--check': {
         const isGA = GitHubCacheHandler.isGitHubActions();
         console.log(JSON.stringify({
           success: true,
@@ -149,9 +149,9 @@ async function main(): Promise<void> {
         break;
       }
 
-      case 'restore': {
+      case '--restore': {
         if (args.length < 3) {
-          console.error('restore requires <key> <path> [restore-keys...]');
+          console.error('--restore requires <key> <path> [restore-keys...]');
           process.exit(1);
         }
 
@@ -170,9 +170,9 @@ async function main(): Promise<void> {
         break;
       }
 
-      case 'save': {
+      case '--save': {
         if (args.length < 3) {
-          console.error('save requires <key> <path>');
+          console.error('--save requires <key> <path>');
           process.exit(1);
         }
 
@@ -189,7 +189,7 @@ async function main(): Promise<void> {
         break;
       }
 
-      case 'version': {
+      case '--version': {
         const packageJson = require('../package.json');
         const version = packageJson.version || '1.0.0';
         console.log(`github-cache-cli version ${version}`);
