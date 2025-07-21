@@ -590,7 +590,6 @@
   "ForceSystemBinariesOnWeirdPlatforms": "La variable de entorno VCPKG_FORCE_SYSTEM_BINARIES debe establecerse en las plataformas arm, s390x, ppc64le y riscv.",
   "FormattedParseMessageExpressionPrefix": "en la expresión:",
   "GetParseFailureInfo": "Use '--debug' para obtener más información sobre los errores de análisis.",
-  "GhaBinaryCacheDeprecated": "Se ha quitado el back-end de almacenamiento en caché binario \"x-text\". Considere la posibilidad de usar un proveedor de almacenamiento en caché binario basado en NuGet en su lugar. Consulte la documentación ampliada en {url}.",
   "GitCommandFailed": "no se pudo ejecutar: {command_line}",
   "GitCommitUpdateVersionDatabase": "git commit -m \"Actualizar base de datos de versión\"",
   "GitFailedToFetch": "error al capturar la referencia {value} del repositorio {url}",

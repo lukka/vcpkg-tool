@@ -590,7 +590,6 @@
   "ForceSystemBinariesOnWeirdPlatforms": "Zmienna środowiskowa VCPKG_FORCE_SYSTEM_BINARIES musi być ustawiona na platformach ARM, s390x, ppc64le i RISCV.",
   "FormattedParseMessageExpressionPrefix": "na wyrażeniu:",
   "GetParseFailureInfo": "Użyj polecenia „--debug”, aby uzyskać więcej informacji o błędach analizy.",
-  "GhaBinaryCacheDeprecated": "Usunięto binarne zaplecze buforowania „x-png”. Zastanów się nad użyciem dostawcy buforowania plików binarnych opartego na bibliotece NuGet. Więcej informacji znajdziesz w rozszerzonej dokumentacji pod adresem {url}.",
   "GitCommandFailed": "nie można wykonać polecenia: {command_line}",
   "GitCommitUpdateVersionDatabase": "git commit -m „Aktualizuj bazę danych wersji”",
   "GitFailedToFetch": "nie można pobrać wartości {value} odwołania z repozytorium {url}",

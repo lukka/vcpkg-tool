@@ -1,0 +1,31 @@
+name: Validation for https://github.com/lukka/vcpkg-tool/pull/2
+
+on:
+  pull_request:
+    branches:
+     - copilot/fix-1
+  push:
+    branches:
+     - copilot/fix-1
+  workflow_dispatch:
+
+jobs:
+  builds:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cd ${{ github.workspace }} && cmake --preset=macos-ci 
+      - run: cd ${{ github.workspace }} && cmake --build --preset=macos-ci
+      - name: Checkout microsoft/vcpkg for end-to-end tests
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          path: ${{ github.workspace }}/vcpkg
+          repository: lukka/vcpkg
+      - run: mkdir -p ${{ github.workspace }}/vcpkg/scripts/github-cache-cli/
+      - run: cp ${{ github.workspace }}/scripts/github-cache-cli/dist/github-cache-cli.js ${{ github.workspace }}/vcpkg/scripts/github-cache-cli/ 
+      - run: cp ${{ github.workspace }}/out/build/macos-ci/vcpkg ${{ github.workspace }}/vcpkg/
+      - run: ${{ github.workspace }}/vcpkg/vcpkg --debug --vcpkg-root ${{ github.workspace }}/vcpkg install angle
+        env:
+          VCPKG_FEATURE_FLAGS: "binarycaching"
+          VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"

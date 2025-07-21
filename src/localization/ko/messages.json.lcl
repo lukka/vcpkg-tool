@@ -6199,15 +6199,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";GhaBinaryCacheDeprecated" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[The 'x-gha' binary caching backend has been removed. Consider using a NuGet-based binary caching provider instead, see extended documentation at {url}.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA['x-gha' 이진 캐싱 백엔드가 제거되었습니다. 대신 NuGet 기반 이진 캐싱 공급자를 사용하는 것이 좋습니다. 자세한 내용은 {url}의 확장 문서를 참조하세요.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";GitCommandFailed" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[failed to execute: {command_line}]]></Val>

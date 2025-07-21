@@ -590,7 +590,6 @@
   "ForceSystemBinariesOnWeirdPlatforms": "環境變數 VCPKG_FORCE_SYSTEM_BINARIES 必須在 s390x、ppc64le 和 riscv 平台上設定。",
   "FormattedParseMessageExpressionPrefix": "在運算式上:",
   "GetParseFailureInfo": "使用 '--debug' 取得剖析失敗的詳細資訊。",
-  "GhaBinaryCacheDeprecated": "已移除 'x-gha' 二進位快取後端。請考慮改用基於 NuGet 的二進位快取提供者；請參閱 {url} 的擴充文件。",
   "GitCommandFailed": "無法執行: {command_line}",
   "GitCommitUpdateVersionDatabase": "git 認可 -m “Update version database”",
   "GitFailedToFetch": "無法從存放庫 {url} 擷取 ref {value}",

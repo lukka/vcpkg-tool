@@ -16,3 +16,9 @@ CMakeLists.txt.user
 /vcpkg-root
 /CMakeUserPresets.json
 /work
+
+# Ignore compiled github-cache-cli TypeScript output and dependencies
+./scripts/github-cache-cli/**/*.js
+./scripts/github-cache-cli/**/*.d.ts
+./scripts/github-cache-cli/**/*.js.map
+./scripts/github-cache-cli/node_modules/
