@@ -130,6 +130,7 @@ async function main(): Promise<void> {
     console.error('  restore <key> <path> [restore-keys...]  - Restore cache entry');
     console.error('  save <key> <path>                       - Save cache entry');
     console.error('  check                                   - Check GitHub Actions environment');
+    console.error('  version                                 - Show version information');
     process.exit(1);
   }
 
@@ -185,6 +186,13 @@ async function main(): Promise<void> {
 
         console.log(JSON.stringify(result));
         process.exit(result.success ? 0 : 1);
+        break;
+      }
+
+      case 'version': {
+        const packageJson = require('../package.json');
+        const version = packageJson.version || '1.0.0';
+        console.log(`github-cache-cli version ${version}`);
         break;
       }
 
